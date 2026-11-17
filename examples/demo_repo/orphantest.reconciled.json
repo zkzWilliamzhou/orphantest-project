@@ -1,0 +1,25 @@
+{
+  "format": "orphantest/config/1",
+  "reviewed": true,
+  "purpose": "local_feedback",
+  "runner": "unittest",
+  "discovery": {
+    "roots": ["tests"],
+    "patterns": ["test_*.py", "*_test.py"]
+  },
+  "commands": [
+    {
+      "id": "all_tests",
+      "argv": ["python", "-m", "unittest", "discover", "-s", "tests", "-v"],
+      "timeout_seconds": 20
+    }
+  ],
+  "exemptions": [
+    {
+      "node": "tests/legacy_test_tax.py",
+      "reason": "manually run by the release team on Windows; re-enable when CI adds a Windows job"
+    }
+  ],
+  "junit_path": null,
+  "limits": {}
+}

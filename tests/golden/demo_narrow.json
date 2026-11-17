@@ -1,0 +1,126 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_math.py",
+        "-v"
+      ],
+      "errors": [],
+      "id": "unit_math",
+      "observations": 2,
+      "returncode": 0,
+      "timed_out": false
+    }
+  ],
+  "config_digest": "9591de666661250deed966b98c98b88de92b1a516d8370e64e501c6c7cc12d50",
+  "execution": {
+    "capture_complete": true,
+    "copied_files": 7,
+    "errors": [],
+    "mapped_records": 2,
+    "observed_records": 2,
+    "unreconciled_records": 0
+  },
+  "exemptions": [],
+  "exit_code": 1,
+  "findings": [
+    {
+      "blocking": true,
+      "command": "",
+      "evidence": "node discovered statically",
+      "file": "tests/test_billing.py",
+      "kind": "DISCOVERED_NOT_EXECUTED",
+      "line": 8,
+      "node": "tests/test_billing.py::TestBilling::test_invoice_total",
+      "observed_status": "",
+      "reason": "no declared command observed this node"
+    },
+    {
+      "blocking": true,
+      "command": "",
+      "evidence": "node discovered statically",
+      "file": "tests/test_billing.py",
+      "kind": "DISCOVERED_NOT_EXECUTED",
+      "line": 5,
+      "node": "tests/test_billing.py::TestBilling::test_tax_rounding",
+      "observed_status": "",
+      "reason": "no declared command observed this node"
+    },
+    {
+      "blocking": true,
+      "command": "",
+      "evidence": "node discovered statically",
+      "file": "tests/test_exports.py",
+      "kind": "DISCOVERED_NOT_EXECUTED",
+      "line": 5,
+      "node": "tests/test_exports.py::TestExports::test_csv_header",
+      "observed_status": "",
+      "reason": "no declared command observed this node"
+    },
+    {
+      "blocking": true,
+      "command": "",
+      "evidence": "node discovered statically",
+      "file": "tests/test_exports.py",
+      "kind": "DISCOVERED_NOT_EXECUTED",
+      "line": 8,
+      "node": "tests/test_exports.py::TestExports::test_row_count",
+      "observed_status": "",
+      "reason": "no declared command observed this node"
+    },
+    {
+      "blocking": true,
+      "command": "",
+      "evidence": "file exists under a discovery root",
+      "file": "tests/legacy_test_tax.py",
+      "kind": "NOT_DISCOVERED",
+      "line": 1,
+      "node": "",
+      "observed_status": "",
+      "reason": "file name does not match discovery.patterns"
+    }
+  ],
+  "format": "orphantest/ledger/1",
+  "inventory": {
+    "collection_errors": 0,
+    "discovered_nodes": 6,
+    "files_matched": 3,
+    "files_total": 4,
+    "files_unmatched": [
+      "tests/legacy_test_tax.py"
+    ],
+    "symlinks": [],
+    "unsupported": [],
+    "warnings": []
+  },
+  "limits": {
+    "max_command_seconds": 60,
+    "max_commands": 32,
+    "max_depth": 32,
+    "max_file_bytes": 2097152,
+    "max_files": 20000,
+    "max_nodes": 200000,
+    "max_output_bytes": 2097152,
+    "max_path_bytes": 512,
+    "max_total_bytes": 67108864
+  },
+  "overall": "DISCREPANCY_REPORTED",
+  "purpose": "local_feedback",
+  "runner": "unittest",
+  "schema_version": "orphantest/ledger/1",
+  "scope": {
+    "claim": "execution-inventory discrepancy under declared commands",
+    "declared_subset_only": true
+  },
+  "tool": {
+    "name": "orphantest",
+    "version": "1.0.0"
+  }
+}

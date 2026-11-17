@@ -1,0 +1,70 @@
+orphantest 1.0.0 — release bundle
+==================================
+
+Contents
+--------
+  orphantest/                        full source tree (the deliverable)
+  architecture-review-20261111.html  visual architecture deepening report
+  RELEASE_NOTES.txt                  this file
+
+What it is
+----------
+A zero-dependency Python 3.10+ CLI that reconciles three inventories and reports
+execution-inventory discrepancies under the commands a repository itself declares:
+
+  * test files present on disk
+  * test nodes statically discovered (AST, never imports target code)
+  * test nodes observed as executed under the declared commands
+
+It does NOT say the code is correct, green, or ready. Its output field is `scope`,
+never `coverage`. The overall state describes the ledger only.
+
+30-second demo (from inside orphantest/)
+----------------------------------------
+  python3 -m orphantest --version
+  python3 -m orphantest --self-test
+  python3 -m orphantest --root examples/demo_repo \
+      --config examples/demo_repo/orphantest.json \
+      audit --execute --trust-config
+
+Expected: exit 1, overall DISCREPANCY_REPORTED, 5 findings, and the exact
+human output documented in docs/DESIGN.md.
+
+  python3 -m orphantest --root examples/demo_repo \
+      --config examples/demo_repo/orphantest.reconciled.json \
+      audit --execute --trust-config
+
+Expected: exit 0, overall INVENTORY_RECONCILED.
+
+Install
+-------
+  python3 -m pip install --no-deps ./orphantest
+  orphantest --version
+
+Verification status at packaging time
+-------------------------------------
+  * 113 bundled tests: OK
+  * 8 independent examination rounds: ALL PASS (docs/REVIEW_LOG.md)
+  * 10 verification gates: ALL PASS (bash scripts/verify.sh)
+  * Raw ledgers byte-identical across 3 runs; golden files reproducible
+  * Architecture refactor proven byte-identical before/after (docs/ARCHITECTURE.md)
+  * Wheel builds as orphantest-1.0.0 with a working console entry point
+
+Read first
+----------
+  orphantest/README.md              what it does and what it does not do
+  orphantest/docs/DECISIONS.md      why this concept survived prior-art checks
+  orphantest/docs/ARCHITECTURE.md   the deepening round and zero-change proof
+  orphantest/SECURITY.md            trust boundary and known limitations
+  orphantest/CHANGELOG.md           what shipped
+
+Known limitations (not hidden)
+------------------------------
+  * Windows is not a supported platform for 1.0.0; it is absent from CI.
+  * `runner: "junit"` is reserved and has no dedicated dispatch (ADR 0003).
+  * Adapters cover pytest verbose, unittest verbose, and JUnit XML only.
+  * Git provenance records HEAD and parents, not worktree cleanliness.
+  * No star count, correctness, coverage, or test-quality claim is made.
+
+License: MIT (see orphantest/LICENSE). The LICENSE additionally prohibits using
+records from this tool to evaluate individuals.

@@ -1,0 +1,20 @@
+{
+  "format": "orphantest/config/1",
+  "reviewed": true,
+  "purpose": "local_feedback",
+  "runner": "unittest",
+  "discovery": {
+    "roots": ["tests"],
+    "patterns": ["test_*.py", "*_test.py"]
+  },
+  "commands": [
+    {
+      "id": "unit_math",
+      "argv": ["python", "-m", "unittest", "discover", "-s", "tests", "-p", "test_math.py", "-v"],
+      "timeout_seconds": 20
+    }
+  ],
+  "exemptions": [],
+  "junit_path": null,
+  "limits": {}
+}

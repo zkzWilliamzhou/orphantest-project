@@ -1,0 +1,85 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-v"
+      ],
+      "errors": [],
+      "id": "all_tests",
+      "observations": 6,
+      "returncode": 0,
+      "timed_out": false
+    }
+  ],
+  "config_digest": "f121ceea346240f86e77307ab324282f78659762c6b16ee8ec6c9fe5b8ba4564",
+  "execution": {
+    "capture_complete": true,
+    "copied_files": 7,
+    "errors": [],
+    "mapped_records": 6,
+    "observed_records": 6,
+    "unreconciled_records": 0
+  },
+  "exemptions": [
+    {
+      "node": "tests/legacy_test_tax.py",
+      "reason": "manually run by the release team on Windows; re-enable when CI adds a Windows job"
+    }
+  ],
+  "exit_code": 0,
+  "findings": [
+    {
+      "blocking": false,
+      "command": "",
+      "evidence": "manually run by the release team on Windows; re-enable when CI adds a Windows job",
+      "file": "tests/legacy_test_tax.py",
+      "kind": "EXEMPT",
+      "line": 1,
+      "node": "",
+      "observed_status": "",
+      "reason": "declared file exemption; always reported"
+    }
+  ],
+  "format": "orphantest/ledger/1",
+  "inventory": {
+    "collection_errors": 0,
+    "discovered_nodes": 6,
+    "files_matched": 3,
+    "files_total": 4,
+    "files_unmatched": [
+      "tests/legacy_test_tax.py"
+    ],
+    "symlinks": [],
+    "unsupported": [],
+    "warnings": []
+  },
+  "limits": {
+    "max_command_seconds": 60,
+    "max_commands": 32,
+    "max_depth": 32,
+    "max_file_bytes": 2097152,
+    "max_files": 20000,
+    "max_nodes": 200000,
+    "max_output_bytes": 2097152,
+    "max_path_bytes": 512,
+    "max_total_bytes": 67108864
+  },
+  "overall": "INVENTORY_RECONCILED",
+  "purpose": "local_feedback",
+  "runner": "unittest",
+  "schema_version": "orphantest/ledger/1",
+  "scope": {
+    "claim": "execution-inventory discrepancy under declared commands",
+    "declared_subset_only": true
+  },
+  "tool": {
+    "name": "orphantest",
+    "version": "1.0.0"
+  }
+}

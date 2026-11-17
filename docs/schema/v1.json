@@ -1,0 +1,163 @@
+{
+  "$comment": "orphantest v1 format descriptions. These are descriptive JSON Schemas for documentation and validation tooling; the shipped program validates with hand-written strict checks in contract.py, bundle.py and report.py and has zero runtime dependencies.",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "orphantest v1 formats",
+  "version": "orphantest/ledger/1",
+  "formats": {
+    "config": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["format", "reviewed", "runner", "discovery", "commands", "exemptions", "limits"],
+      "properties": {
+        "format": {"const": "orphantest/config/1"},
+        "reviewed": {"type": "boolean", "description": "A human must set this to true after reading every argv. false yields CONFIG_NOT_REVIEWED."},
+        "purpose": {"enum": ["local_feedback", "pre_commit", "ci_evidence", "governance_audit"]},
+        "runner": {
+          "enum": ["unittest", "pytest", "junit"],
+          "description": "junit is reserved: see ADR 0003. JUnit XML is reached through junit_path."
+        },
+        "discovery": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["roots", "patterns"],
+          "properties": {
+            "roots": {"type": "array", "items": {"type": "string"}, "minItems": 1, "maxItems": 64},
+            "patterns": {"type": "array", "items": {"type": "string", "minLength": 1, "maxLength": 64}, "minItems": 1, "maxItems": 64}
+          }
+        },
+        "commands": {
+          "type": "array",
+          "maxItems": 32,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "argv"],
+            "properties": {
+              "id": {"type": "string"},
+              "argv": {
+                "type": "array",
+                "minItems": 1,
+                "items": {"type": "string"},
+                "description": "Never a shell string. argv[0] must be python, python3, or an absolute executable path."
+              },
+              "timeout_seconds": {"type": "integer", "minimum": 1, "maximum": 60}
+            }
+          }
+        },
+        "exemptions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["node", "reason"],
+            "properties": {
+              "node": {"type": "string"},
+              "reason": {"type": "string", "minLength": 8}
+            }
+          }
+        },
+        "junit_path": {"type": ["string", "null"]},
+        "limits": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "max_files": {"type": "integer", "minimum": 1, "maximum": 20000},
+            "max_total_bytes": {"type": "integer", "minimum": 1, "maximum": 67108864},
+            "max_file_bytes": {"type": "integer", "minimum": 1, "maximum": 2097152},
+            "max_depth": {"type": "integer", "minimum": 1, "maximum": 32},
+            "max_path_bytes": {"type": "integer", "minimum": 1, "maximum": 512},
+            "max_output_bytes": {"type": "integer", "minimum": 1, "maximum": 2097152},
+            "max_command_seconds": {"type": "integer", "minimum": 1, "maximum": 60},
+            "max_commands": {"type": "integer", "minimum": 1, "maximum": 32},
+            "max_nodes": {"type": "integer", "minimum": 1, "maximum": 200000}
+          }
+        }
+      }
+    },
+    "evidence_bundle": {
+      "type": "object",
+      "required": ["format", "config_digest", "commands", "inventory"],
+      "properties": {
+        "format": {"const": "orphantest/evidence/1"},
+        "config_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "commands": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "argv", "errors", "observations"],
+            "properties": {
+              "id": {"type": "string"},
+              "argv": {"type": "array", "items": {"type": "string"}},
+              "returncode": {"type": ["integer", "null"]},
+              "timed_out": {"type": "boolean"},
+              "output_digest": {"type": "string"},
+              "stdout_bytes": {"type": "integer"},
+              "stderr_bytes": {"type": "integer"},
+              "executable_digest": {"type": "string", "description": "Best-effort SHA-256 of the operator-declared interpreter; empty if unreadable."},
+              "errors": {"type": "array", "items": {"type": "string"}},
+              "observations": {
+                "type": "array",
+                "maxItems": 200000,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["node", "status", "command", "source"],
+                  "properties": {
+                    "node": {"type": "string"},
+                    "status": {"enum": ["executed", "failed", "error", "skipped"]},
+                    "command": {"type": "string"},
+                    "source": {"enum": ["pytest-verbose", "unittest-verbose", "junit-xml"]}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "ledger": {
+      "type": "object",
+      "required": ["format", "schema_version", "tool", "purpose", "config_digest", "runner", "limits", "provenance", "inventory", "commands", "execution", "findings", "exemptions", "scope", "overall", "exit_code"],
+      "properties": {
+        "format": {"const": "orphantest/ledger/1"},
+        "schema_version": {"const": "orphantest/ledger/1"},
+        "overall": {
+          "enum": ["INVENTORY_RECONCILED", "DISCREPANCY_REPORTED", "CAPTURE_INCOMPLETE", "NO_COMMANDS_DECLARED", "CONFIG_NOT_REVIEWED"],
+          "description": "Describes the ledger, never the repository. See ADR 0001."
+        },
+        "exit_code": {"enum": [0, 1, 2, 3, 4]},
+        "scope": {
+          "type": "object",
+          "required": ["declared_subset_only", "claim"],
+          "properties": {
+            "declared_subset_only": {"const": true},
+            "claim": {"const": "execution-inventory discrepancy under declared commands"}
+          }
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["kind", "node", "file", "command", "evidence", "reason", "observed_status", "line", "blocking"],
+            "properties": {
+              "kind": {"enum": ["NOT_DISCOVERED", "DISCOVERED_NOT_EXECUTED", "NOT_RECONCILED", "COLLECTION_ERROR", "COMMAND_FAILED", "CAPTURE_ERROR", "EXEMPT", "OBSERVED_SKIPPED"]},
+              "blocking": {"type": "boolean"},
+              "line": {"type": "integer", "minimum": 1},
+              "observed_status": {"type": "string"}
+            }
+          }
+        },
+        "generated_at": {"type": "string", "description": "Present only with --include-time. Opt-in; breaks byte-for-byte determinism."}
+      }
+    }
+  },
+  "exit_codes": {
+    "0": "INVENTORY_RECONCILED (ledger state only)",
+    "1": "DISCREPANCY_REPORTED",
+    "2": "usage / input error",
+    "3": "internal failure or capture incomplete",
+    "4": "config error"
+  }
+}
